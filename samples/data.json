@@ -1,0 +1,31 @@
+{
+    "source": {
+        "name": "repo-name",
+        "url": "https://github.com/mx51/repo-name"
+    },
+    "stores": [
+        {
+            "name": "service",
+            "type": "postgres",
+            "tables": [
+                {
+                    "name": "table",
+                    "schema": "public",
+                    "description": "",
+                    "fields": [
+                        {
+                            "name": "id",
+                            "data_type": "text",
+                            "description": "Primary key"
+                        },
+                        {
+                            "name": "data",
+                            "data_type": "jsonb",
+                            "description": "Payload"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
