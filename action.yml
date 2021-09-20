@@ -22,6 +22,9 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - run: pip3 install -r ./requirements.txt
+      shell: bash
+
     - run: ${{ github.action_path }}/scripts/generate.sh
       shell: bash
       env:
@@ -34,3 +37,4 @@ runs:
       shell: bash
       env:
         GITHUB_TOKEN: ${{ inputs.repo-token }}
+        GITHUB_PULL: ${{ github.event.pull_request.number }}

@@ -16,13 +16,19 @@ if [[ -z "$GITHUB_TOKEN" ]]; then
     echo "Required: GITHUB_TOKEN"
     exit 1
 fi
+if [[ -z "$GITHUB_PULL" ]]; then
+    echo "Required: GITHUB_PULL"
+    exit 1
+fi
 
 cd $GITHUB_WORKSPACE
 
+echo "Configuring git..."
 git config user.name github-actions
 git config user.email github-actions@github.com
 
 if git ls-files --modified --others --exclude-standard | grep data.json > /dev/null ; then
+    echo "Committing data.json changes..."
     git add data.json
     git commit -m "Update data.json"
     git push

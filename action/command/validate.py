@@ -1,39 +1,116 @@
 import logging
+import jsoncfg
+from jsoncfg.config_classes import (
+    ConfigNode,
+    ConfigJSONObject,
+    ConfigJSONArray,
+    ConfigJSONScalar,
+)
+import requests
+from typing import Any
 from .base import Command
 
 
 class Validate(Command):
-    def __init__(self, workspace: str, token: str):
+    def __init__(
+        self,
+        workspace: str,
+        github_repository: str,
+        github_token: str,
+        github_pull: str,
+    ):
         super().__init__(workspace)
-        if not token:
-            logging.critical("Token missing!")
+        self.github_repository = github_repository
+        self.github_token = github_token
+        self.github_pull = github_pull
+        self.github_path = "data.json"
 
     def execute(self):
-        data = self.read_data()
+        data = jsoncfg.load_config(str(self.data_path))
+        data, _ = self._augment(data)
 
         valid = True
 
-        for store in data.get("stores", []):
-            store_path = [store["name"]]
+        stores, stores_line = data.get("stores", (None, None))
+        if stores:
+            for store, store_line in stores:
+                if not store:
+                    self._error("Empty store.", stores_line)
+                    continue
 
-            for table in store.get("tables", []):
-                table_path = store_path + [table["name"]]
+                valid &= self._validate_description(store, store_line)
 
-                valid &= self._validate_description(table, table_path)
+                tables, tables_line = store.get("tables", (None, None))
+                if tables:
+                    for table, table_line in tables:
+                        if not table:
+                            self._error("Empty table.", tables_line)
+                            continue
 
-                for field in table.get("fields", []):
-                    field_path = table_path + [field["name"]]
+                        valid &= self._validate_description(table, table_line)
 
-                    valid &= self._validate_description(field, field_path)
+                        fields, fields_line = table.get("fields", (None, None))
+                        if fields:
+                            for field, field_line in fields:
+                                if not field:
+                                    self._error("Empty field.", fields_line)
+                                    continue
+
+                                valid &= self._validate_description(field, field_line)
 
         return valid
 
-    @staticmethod
-    def _validate_description(item: dict, path: list) -> bool:
-        description = item.get("description")
+    def _validate_description(self, item: dict, line: int) -> bool:
+        description, description_line = item.get("description", (None, None))
+        line = description_line if description_line else line
 
         if not description:
-            logging.critical("Missing description in %s", ".".join(path))
+            self._error("Missing description.", line)
             return False
 
         return True
+
+    def _error(self, message: str, line: int):
+        logging.critical("L%s: %s", line, message)
+
+        self._github_request(
+            method="post",
+            context=f"pulls/{self.github_pull}/comments",
+            data={
+                "body": message,
+                "path": self.github_path,
+                "side": "RIGHT",
+                "line": line,
+            },
+        )
+
+    def _github_request(self, method: str, context: str, data: dict):
+        r = requests.request(
+            method=method,
+            url=f"https://api.github.com/repos/{self.github_repository}/{context}",
+            headers={
+                "Accept": "application/vnd.github.v3+json",
+                "Authorization": f"token {self.github_token}",
+            },
+            data=data,
+        )
+        if not r.ok:
+            logging.error("Failed to create pull comment: %s", r)
+
+    @staticmethod
+    def _augment(element: ConfigNode) -> Any:
+        line = jsoncfg.node_location(element).line
+        if isinstance(element, ConfigJSONObject):
+            output_dict = {}
+            for key, value in element:
+                output_dict[key] = Validate._augment(value)
+            return (output_dict, line)
+        elif isinstance(element, ConfigJSONArray):
+            output_list = []
+            for item in element:
+                output_list.append(Validate._augment(item))
+            return (output_list, line)
+        elif isinstance(element, ConfigJSONScalar):
+            return (element(), line)
+        else:
+            raise ValueError(f"Unknown element type: {element}")

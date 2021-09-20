@@ -42,9 +42,6 @@ trap cleanup EXIT
 
 cd $ACTION_PATH
 
-echo "Installing action requirements..."
-pip3 install -r ./requirements.txt
-
 case "$STORE_TYPE" in
 
     postgres)
