@@ -1,5 +1,6 @@
 name: "Data Dictionary"
 description: "Generate and check freshness of data dictionaries"
+
 inputs:
   store-name:
     description: "Name of the data store"
@@ -13,13 +14,17 @@ inputs:
   tool-path:
     description: "Path to the data tool files (e.g. migration)"
     required: true
+
 runs:
   using: "composite"
   steps:
-    - run: ${{ github.action_path }}/action.sh
+    - run: ${{ github.action_path }}/scripts/generate.sh
       shell: bash
       env:
         STORE_NAME: ${{ inputs.store-name }}
         STORE_TYPE: ${{ inputs.store-type }}
         TOOL_TYPE: ${{ inputs.tool-type }}
         TOOL_PATH: ${{ inputs.tool-path }}
+
+    - run: ${{ github.action_path }}/scripts/post.sh
+      shell: bash

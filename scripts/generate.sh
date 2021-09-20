@@ -2,6 +2,8 @@
 
 set -e
 
+ACTION_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )/.."
+
 if [[ -z "$STORE_NAME" ]]; then
     echo "Required: STORE_NAME"
     exit 1
@@ -27,7 +29,6 @@ if [[ -z "$GITHUB_REPOSITORY" ]]; then
     exit 1
 fi
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 DOCKER_CLEANUP=""
 
 cleanup () {
@@ -39,8 +40,10 @@ cleanup () {
 
 trap cleanup EXIT
 
+cd $ACTION_PATH
+
 echo "Installing action requirements..."
-pip3 install -r $DIR/requirements.txt
+pip3 install -r ./requirements.txt
 
 case "$STORE_TYPE" in
 
@@ -50,7 +53,7 @@ case "$STORE_TYPE" in
         export DB_USER=postgres
         export DB_PASSWORD=postgres
 
-        pip3 install -r $DIR/requirements-postgres.txt
+        pip3 install -r ./requirements-postgres.txt
 
         postgres_container=data-dictionary-postgres
         
@@ -74,7 +77,7 @@ esac
 case "$TOOL_TYPE" in
 
     rubenv-sql-migrate)
-        docker build -t data-dictionary-golang $DIR/containers/golang
+        docker build -t data-dictionary-golang ./containers/golang
 
         docker run --rm \
             -v $GITHUB_WORKSPACE:/workspace \
@@ -94,4 +97,4 @@ case "$TOOL_TYPE" in
 
 esac
 
-( cd $DIR && python3 -m action )
+python3 -m action generate
