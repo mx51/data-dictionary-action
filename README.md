@@ -1,2 +1,3 @@
 # data-dictionary-action
-GitHub Action for generating and checking freshness of data dictionaries
+
+GitHub Action for generating and checking freshness of data dictionaries.

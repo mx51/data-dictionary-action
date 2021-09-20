@@ -1,0 +1,4 @@
+pylint
+mypy
+black
+types-requests
