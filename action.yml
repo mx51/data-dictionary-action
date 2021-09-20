@@ -3,20 +3,21 @@ description: "Generate and check freshness of data dictionaries"
 
 inputs:
   store-name:
-    description: "Name of the data store"
+    description: "Name of the data store."
     required: true
   store-type:
-    description: "Type of the data store"
+    description: "Type of the data store."
     required: true
   tool-type:
-    description: "Type of the data tool (e.g. migration)"
+    description: "Type of the data tool (e.g. migration)."
     required: true
   tool-path:
-    description: "Path to the data tool files (e.g. migration)"
+    description: "Path to the data tool files (e.g. migration)."
     required: true
   repo-token:
-    description: "GitHub authentication token"
-    required: true
+    description: "GitHub auth token for pull request comments (NOT for commits)."
+    required: false
+    default: ${{ github.token }}
 
 runs:
   using: "composite"

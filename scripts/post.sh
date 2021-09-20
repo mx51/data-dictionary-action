@@ -17,7 +17,7 @@ if [[ -z "$GITHUB_TOKEN" ]]; then
     exit 1
 fi
 
-cd $GITHUB_REPOSITORY
+cd $GITHUB_WORKSPACE
 
 git config user.name github-actions
 git config user.email github-actions@github.com
