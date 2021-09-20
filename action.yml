@@ -22,7 +22,7 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - run: pip3 install -r ./requirements.txt
+    - run: pip3 install -r ${{ github.action_path }}/requirements.txt
       shell: bash
 
     - run: ${{ github.action_path }}/scripts/generate.sh
