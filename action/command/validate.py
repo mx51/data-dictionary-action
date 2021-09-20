@@ -1,4 +1,5 @@
 import logging
+import json
 import jsoncfg
 from jsoncfg.config_classes import (
     ConfigNode,
@@ -17,11 +18,13 @@ class Validate(Command):
         workspace: str,
         github_repository: str,
         github_token: str,
+        github_commit: str,
         github_pull: str,
     ):
         super().__init__(workspace)
         self.github_repository = github_repository
         self.github_token = github_token
+        self.github_commit = github_commit
         self.github_pull = github_pull
         self.github_path = "data.json"
 
@@ -81,6 +84,7 @@ class Validate(Command):
                 "path": self.github_path,
                 "side": "RIGHT",
                 "line": line,
+                "commit_id": self.github_commit,
             },
         )
 
@@ -92,7 +96,7 @@ class Validate(Command):
                 "Accept": "application/vnd.github.v3+json",
                 "Authorization": f"token {self.github_token}",
             },
-            data=data,
+            data=json.dumps(data),
         )
         if not r.ok:
             logging.error("Failed to create pull comment: %s", r)

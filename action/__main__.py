@@ -53,5 +53,6 @@ elif args.command == "validate":
         workspace=GITHUB_WORKSPACE,
         github_repository=GITHUB_REPOSITORY,
         github_token=os.environ["GITHUB_TOKEN"],
+        github_commit=os.environ["GITHUB_COMMIT"],
         github_pull=os.environ["GITHUB_PULL"],
     ).execute()

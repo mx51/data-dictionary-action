@@ -34,6 +34,8 @@ if git ls-files --modified --others --exclude-standard | grep data.json > /dev/n
     git push
 fi
 
+export GITHUB_COMMIT=`git rev-parse HEAD`
+
 cd $ACTION_PATH
 
 python3 -m action validate
