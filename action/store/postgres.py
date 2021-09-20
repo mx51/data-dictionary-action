@@ -1,5 +1,6 @@
 import psycopg2
 import psycopg2.extras
+from typing import Tuple, Dict
 
 
 def read_store(name: str, database: str, user: str, password: str) -> dict:
@@ -40,7 +41,7 @@ def read_store(name: str, database: str, user: str, password: str) -> dict:
         ;"""
     )
 
-    table_lookup = {}
+    table_lookup: Dict[Tuple, Dict] = {}
 
     for row in cur.fetchall():
         table_schema = row["table_schema"]

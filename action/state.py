@@ -15,12 +15,12 @@ def _copy_keys(source: dict, target: dict, exclude=()):
             target[key] = val
 
 
-def merge(data: dict, source: str, store: dict):
+def merge(data: dict, source: dict, store: dict):
     """Merge existing data state with target.
 
     Args:
         data (dict): Data state.
-        source (str): New source.
+        source (dict): New source.
         store (dict): New store.
     """
 
@@ -30,15 +30,10 @@ def merge(data: dict, source: str, store: dict):
     }
 
     existing_stores = data.get("stores", [])
-    if not existing_stores:
-        data["stores"] = [store]
+    existing_store = _find_by_name(existing_stores, store)
+    if not existing_store:
+        data["stores"] = existing_stores + [store]
         return
-
-    existing_store = None
-    for s in existing_stores:
-        if s.get("name") == store.get("name"):
-            existing_store = s
-            break
 
     # Leave unrelated stores, copy keys from new store to existing
     _copy_keys(source=store, target=existing_store, exclude=("tables",))
