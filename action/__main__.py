@@ -1,4 +1,5 @@
 import os
+import sys
 import json
 import logging
 from pathlib import Path
@@ -42,7 +43,8 @@ if STORE_TYPE == "postgres":
         password=os.environ["DB_PASSWORD"],
     )
 else:
-    raise ValueError(f"Store {STORE_TYPE} not found")
+    logging.critical("Store %s not found", STORE_TYPE)
+    sys.exit(1)
 
 merge(
     data=data,
@@ -57,4 +59,5 @@ with open(path, mode="w", encoding="utf-8") as f:
     json.dump(data, f, skipkeys=True, indent=4)
 
 if not validate(data):
-    raise ValueError("Validation failed, check logs above for errors")
+    logging.critical("Validation failed, check logs above for errors")
+    sys.exit(1)

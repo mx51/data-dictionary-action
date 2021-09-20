@@ -36,17 +36,29 @@ def merge(data: dict, source: dict, store: dict):
         return
 
     # Leave unrelated stores, copy keys from new store to existing
-    _copy_keys(source=store, target=existing_store, exclude=("tables",))
+    _copy_keys(
+        source=store,
+        target=existing_store,
+        exclude=("tables", "type"),
+    )
 
     tables = store.get("tables", [])
     for table in tables:
         existing_table = _find_by_name(existing_store.get("tables", []), table)
         if existing_table:
-            _copy_keys(source=existing_table, target=table, exclude=("fields",))
+            _copy_keys(
+                source=existing_table,
+                target=table,
+                exclude=("fields", "schema"),
+            )
             for field in table.get("fields", []):
                 existing_field = _find_by_name(existing_table.get("fields", []), field)
                 if existing_field:
-                    _copy_keys(source=existing_field, target=field)
+                    _copy_keys(
+                        source=existing_field,
+                        target=field,
+                        exclude=("data_type", "nullable", "primary_key", "default"),
+                    )
 
         table.get("fields", []).sort(key=lambda x: x.get(("ord",)))
 
