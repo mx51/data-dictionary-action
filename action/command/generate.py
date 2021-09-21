@@ -25,6 +25,8 @@ class Generate(Command):
             **self.source,
         }
 
+        self._sort_store(store)
+
         existing_stores = data.get("stores", [])
         existing_store = self._find_by_name(existing_stores, store)
         if not existing_store:
@@ -58,11 +60,15 @@ class Generate(Command):
                             exclude=("data_type", "nullable", "primary_key", "default"),
                         )
 
+        existing_store["tables"] = tables
+
+    @staticmethod
+    def _sort_store(store: dict):
+        tables = store.get("tables", [])
+        for table in tables:
             table.get("fields", []).sort(key=lambda x: x.get(("ord",)))
 
         tables.sort(key=lambda x: x["name"])
-
-        existing_store["tables"] = tables
 
     @staticmethod
     def _find_by_name(items: List[dict], matching: dict, name="name") -> Optional[dict]:
