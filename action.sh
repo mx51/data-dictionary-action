@@ -68,18 +68,13 @@ generate () {
             postgres_container=data-dictionary-postgres
             
             docker run -d \
+                -v $ACTION_PATH/containers/postgres/initdb.sh:/docker-entrypoint-initdb.d/initdb.sh \
                 -p 5432:5432 \
                 -e POSTGRES_DB=${DB_NAME} \
                 -e POSTGRES_USER=${DB_USER} \
                 -e POSTGRES_PASSWORD=${DB_PASSWORD} \
                 --name $postgres_container \
                 postgres:13
-            
-            sleep 2
-
-            docker exec $postgres_container \
-                psql -h 0.0.0.0 -U ${DB_USER} -W ${DB_PASSWORD} \
-                -c 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp";'
 
             DOCKER_CLEANUP="$postgres_container $DOCKER_CLEANUP"
             ;;
