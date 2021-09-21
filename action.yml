@@ -25,16 +25,12 @@ runs:
     - run: pip3 install -r ${{ github.action_path }}/requirements.txt
       shell: bash
 
-    - run: ${{ github.action_path }}/scripts/generate.sh
+    - run: ${{ github.action_path }}/action.sh
       shell: bash
       env:
         STORE_NAME: ${{ inputs.store-name }}
         STORE_TYPE: ${{ inputs.store-type }}
         TOOL_TYPE: ${{ inputs.tool-type }}
         TOOL_PATH: ${{ inputs.tool-path }}
-
-    - run: ${{ github.action_path }}/scripts/post.sh
-      shell: bash
-      env:
         GITHUB_TOKEN: ${{ inputs.repo-token }}
         GITHUB_PULL: ${{ github.event.pull_request.number }}

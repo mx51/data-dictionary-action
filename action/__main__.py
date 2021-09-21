@@ -23,7 +23,6 @@ GITHUB_REPOSITORY_NAME = GITHUB_REPOSITORY.split("/").pop()
 GITHUB_REPOSITORY_URL = "https://github.com/" + GITHUB_REPOSITORY
 
 if args.command == "generate":
-
     store_type = os.environ["STORE_TYPE"]
     # Import modules inside branch with appropriate dependencies loaded
     if store_type == "postgres":
@@ -48,11 +47,10 @@ if args.command == "generate":
     ).execute()
 
 elif args.command == "validate":
-
     Validate(
         workspace=GITHUB_WORKSPACE,
         github_repository=GITHUB_REPOSITORY,
         github_token=os.environ["GITHUB_TOKEN"],
-        github_commit=os.environ["GITHUB_COMMIT"],
         github_pull=os.environ["GITHUB_PULL"],
+        github_commit=os.environ["GITHUB_COMMIT"],
     ).execute()
