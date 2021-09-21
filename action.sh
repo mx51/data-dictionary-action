@@ -132,6 +132,11 @@ echo "Configuring git..."
 git config user.name github-actions
 git config user.email github-actions@github.com
 
+if ! git diff --name-only HEAD~1 HEAD > /dev/null ; then
+    echo "Failed to fetch HEAD~1, ensure actions/checkout fetch-depth is 2 or more..."
+    exit 1
+fi
+
 # Only do anything when relevant files changed
 if ! git diff --name-only HEAD~1 HEAD | grep -E "^data.json|^$TOOL_PATH" > /dev/null ; then
     echo "No relevant changes detected in last commit, exiting..."
