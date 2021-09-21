@@ -75,10 +75,10 @@ generate () {
                 --name $postgres_container \
                 postgres:13
             
-            sleep 1
+            sleep 2
 
             docker exec $postgres_container \
-                psql -U ${DB_USER} -W ${DB_PASSWORD} \
+                psql -h 0.0.0.0 -U ${DB_USER} -W ${DB_PASSWORD} \
                 -c 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp";'
 
             DOCKER_CLEANUP="$postgres_container $DOCKER_CLEANUP"
