@@ -28,3 +28,4 @@ class Command(metaclass=ABCMeta):
     def write_data(self, data: dict):
         with open(self.data_path, mode="w", encoding="utf-8") as f:
             json.dump(data, f, skipkeys=True, indent=4)
+            f.write("\n")
