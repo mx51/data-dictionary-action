@@ -49,7 +49,7 @@ class Validate(Command):
 
                     field_path = f"{table_path}.{field['name']}"
 
-                    if not table.get("description"):
+                    if not field.get("description"):
                         error = f"Missing description in field `{field_path}`"
                         logging.error(error)
                         errors.append(error)
