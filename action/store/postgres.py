@@ -44,7 +44,6 @@ class PostgresStore(Store):
             where 
                 c.table_schema not in ('information_schema', 'pg_catalog') 
                 and c.table_name not in ('migrations')
-                and (tc.constraint_type is null or tc.constraint_type = 'PRIMARY KEY')
             ;"""
         )
 
