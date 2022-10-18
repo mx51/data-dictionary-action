@@ -75,6 +75,7 @@ class Validate(Command):
                 "Authorization": f"token {self.github_token}",
             },
             data=json.dumps(data),
+            timeout=30,
         )
         if not r.ok:
             logging.error("Failed to create pull comment: %s", r)
