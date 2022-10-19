@@ -43,3 +43,30 @@ jobs:
           tool-type: rubenv-sql-migrate
           tool-path: schema
 ```
+
+## Development
+
+For local development, ensure the following are installed:
+
+- Docker
+- Python 3.8+
+
+The following environment variables are required to be set (e.g. `.env` file):
+
+- `GITHUB_REPOSITORY` - org/repo that you are testing against (see [default environment variables](https://docs.github.com/en/actions/learn-github-actions/environment-variables#default-environment-variables))
+- `GITHUB_WORKSPACE` - path to directory you are testing against (see [default environment variables](https://docs.github.com/en/actions/learn-github-actions/environment-variables#default-environment-variables))
+- `STORE_NAME` (see `inputs.store-name`)
+- `STORE_TYPE` (see `inputs.store-type`)
+- `TOOL_TYPE` (see `inputs.tool-type`)
+- `TOOL_PATH` (see `inputs.tool-path`)
+
+If you want to test Git actions (committing and pushing changes), set the following variables as well:
+
+- `GITHUB_TOKEN` (see `inputs.repo-token`)
+- `GITHUB_PULL` (see `github.event.pull_request.number`)
+
+Once everything is set, execute the action script:
+
+```shell
+make run
+```

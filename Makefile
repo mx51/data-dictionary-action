@@ -1,3 +1,8 @@
+ifneq (,$(wildcard ./.env))
+    include .env
+    export
+endif
+
 requirements:
 	pip3 install -r requirements.txt 
 	pip3 install -r requirements-test.txt 
@@ -21,3 +26,7 @@ check-type:
 
 check: check-fmt check-lint check-type
 .PHONY: check
+
+run:
+	./action.sh
+.PHONY: run

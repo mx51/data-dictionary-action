@@ -5,36 +5,32 @@ set -e
 ACTION_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
 if [[ -z "$STORE_NAME" ]]; then
-    echo "Required: STORE_NAME"
+    echo "ERROR: missing STORE_NAME"
     exit 1
 fi
 if [[ -z "$STORE_TYPE" ]]; then
-    echo "Required: STORE_TYPE"
+    echo "ERROR: missing STORE_TYPE"
     exit 1
 fi
 if [[ -z "$TOOL_TYPE" ]]; then
-    echo "Required: TOOL_TYPE"
+    echo "ERROR: missing TOOL_TYPE"
     exit 1
 fi
 if [[ -z "$TOOL_PATH" ]]; then
-    echo "Required: TOOL_PATH"
+    echo "ERROR: missing TOOL_PATH"
     exit 1
 fi
 if [[ -z "$GITHUB_WORKSPACE" ]]; then
-    echo "Required: GITHUB_WORKSPACE"
+    echo "ERROR: missing GITHUB_WORKSPACE"
     exit 1
 fi
 if [[ -z "$GITHUB_REPOSITORY" ]]; then
-    echo "Required: GITHUB_REPOSITORY"
+    echo "ERROR: missing GITHUB_REPOSITORY"
     exit 1
 fi
-if [[ -z "$GITHUB_TOKEN" ]]; then
-    echo "Required: GITHUB_TOKEN"
-    exit 1
-fi
-if [[ -z "$GITHUB_PULL" ]]; then
-    echo "Required: GITHUB_PULL"
-    exit 1
+if [[ -z "$GITHUB_TOKEN" ]] || [[ -z "$GITHUB_PULL" ]]; then
+    echo "WARNING: missing GITHUB_TOKEN or GITHUB_PULL, skipping git actions"
+    SKIP_GIT=1
 fi
 
 DOCKER_CLEANUP=""
@@ -114,14 +110,16 @@ generate () {
 validate () {
     cd $GITHUB_WORKSPACE
 
-    if git ls-files --modified --others --exclude-standard | grep data.json > /dev/null ; then
-        echo "Committing data.json changes..."
-        git add data.json
-        git commit -m "Update data.json"
-        git push
+    if [[ -z "$SKIP_GIT" ]]; then
+        if git ls-files --modified --others --exclude-standard | grep data.json > /dev/null ; then
+            echo "Committing data.json changes..."
+            git add data.json
+            git commit -m "Update data.json"
+            git push
+        fi
+        
+        export GITHUB_COMMIT=`git rev-parse HEAD`
     fi
-
-    export GITHUB_COMMIT=`git rev-parse HEAD`
 
     cd $ACTION_PATH
 
@@ -129,19 +127,22 @@ validate () {
 }
 
 cd $GITHUB_WORKSPACE
-echo "Configuring git..."
-git config user.name github-actions
-git config user.email github-actions@github.com
 
-if ! git diff --name-only HEAD~1 HEAD > /dev/null ; then
-    echo "Failed to fetch HEAD~1, ensure actions/checkout fetch-depth is 2 or more..."
-    exit 1
-fi
+if [[ -z "$SKIP_GIT" ]]; then
+    echo "Configuring git..."
+    git config user.name github-actions
+    git config user.email github-actions@github.com
 
-# Only do anything when relevant files changed
-if ! git diff --name-only HEAD~1 HEAD | grep -E "^data.json|^$TOOL_PATH" > /dev/null ; then
-    echo "No relevant changes detected in last commit, exiting..."
-    exit 0
+    if ! git diff --name-only HEAD~1 HEAD > /dev/null ; then
+        echo "Failed to fetch HEAD~1, ensure actions/checkout fetch-depth is 2 or more..."
+        exit 1
+    fi
+
+    # Only do anything when relevant files changed
+    if ! git diff --name-only HEAD~1 HEAD | grep -E "^data.json|^$TOOL_PATH" > /dev/null ; then
+        echo "No relevant changes detected in last commit, exiting..."
+        exit 0
+    fi
 fi
 
 prepare
