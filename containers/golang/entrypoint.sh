@@ -3,15 +3,15 @@
 set -e
 
 if [[ -z "$STORE_TYPE" ]]; then
-    echo "Required: STORE_TYPE"
+    echo "ERROR: missing STORE_TYPE"
     exit 1
 fi
 if [[ -z "$TOOL_TYPE" ]]; then
-    echo "Required: TOOL_TYPE"
+    echo "ERROR: missing TOOL_TYPE"
     exit 1
 fi
 if [[ -z "$TOOL_PATH" ]]; then
-    echo "Required: TOOL_PATH"
+    echo "ERROR: missing TOOL_PATH"
     exit 1
 fi
 

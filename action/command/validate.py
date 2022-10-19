@@ -1,6 +1,7 @@
 import logging
 import json
 import requests
+from typing import Optional
 from .base import Command
 
 
@@ -9,9 +10,9 @@ class Validate(Command):
         self,
         workspace: str,
         github_repository: str,
-        github_token: str,
-        github_pull: str,
-        github_commit: str,
+        github_token: Optional[str],
+        github_pull: Optional[str],
+        github_commit: Optional[str],
     ):
         super().__init__(workspace)
         self.github_repository = github_repository
@@ -67,6 +68,15 @@ class Validate(Command):
             )
 
     def _github_request(self, method: str, context: str, data: dict):
+        if not self.github_token:
+            logging.warning(
+                "Skipping GitHub API request (no token): %s %s %s",
+                method,
+                context,
+                data,
+            )
+            return
+
         r = requests.request(
             method=method,
             url=f"https://api.github.com/repos/{self.github_repository}/{context}",
