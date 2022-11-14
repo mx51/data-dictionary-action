@@ -62,7 +62,7 @@ generate () {
             pip3 install -r ./requirements-postgres.txt
 
             postgres_container=data-dictionary-postgres
-            
+
             docker run -d \
                 -v $ACTION_PATH/containers/postgres/initdb.sh:/docker-entrypoint-initdb.d/initdb.sh \
                 -p 5432:5432 \
@@ -70,12 +70,12 @@ generate () {
                 -e POSTGRES_USER=${DB_USER} \
                 -e POSTGRES_PASSWORD=${DB_PASSWORD} \
                 --name $postgres_container \
-                postgres:13
+                postgres:14
 
             DOCKER_CLEANUP="$postgres_container $DOCKER_CLEANUP"
             ;;
 
-        *) 
+        *)
             echo "ERROR: no store type for '$STORE_TYPE'"
             exit 2
 
@@ -117,7 +117,7 @@ validate () {
             git commit -m "Update data.json"
             git push
         fi
-        
+
         export GITHUB_COMMIT=`git rev-parse HEAD`
     fi
 
