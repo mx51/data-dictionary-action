@@ -21,7 +21,7 @@ class PostgresStore(Store):
         cur = self.conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
         cur.execute(
             """
-            select
+            SELECT
                 c.table_schema,
                 c.table_name,
                 c.column_name,
@@ -30,20 +30,24 @@ class PostgresStore(Store):
                 c.is_nullable,
                 c.data_type,
                 tc.constraint_type = 'PRIMARY KEY' as is_primary_key
-            from information_schema.columns as c
-                left join information_schema.key_column_usage as kcu
+            FROM information_schema.columns AS c
+				JOIN pg_class AS pgc
+					ON c.table_schema = pgc.relnamespace::regnamespace::text
+					AND c.table_name = pgc.relname
+                LEFT JOIN information_schema.key_column_usage AS kcu
                     on c.table_catalog = kcu.table_catalog
-                    and c.table_schema = kcu.table_schema
-                    and c.table_name = kcu.table_name 
-                    and c.column_name = kcu.column_name
-                left join information_schema.table_constraints as tc
-                    on kcu.table_catalog = tc.table_catalog
-                    and kcu.table_schema = tc.table_schema
-                    and kcu.table_name = tc.table_name 
-                    and kcu.constraint_name = tc.constraint_name
-            where 
-                c.table_schema not in ('information_schema', 'pg_catalog') 
-                and c.table_name not in ('migrations')
+                    AND c.table_schema = kcu.table_schema
+                    AND c.table_name = kcu.table_name 
+                    AND c.column_name = kcu.column_name
+                LEFT JOIN information_schema.table_constraints AS tc
+                    ON kcu.table_catalog = tc.table_catalog
+                    AND kcu.table_schema = tc.table_schema
+                    AND kcu.table_name = tc.table_name 
+                    AND kcu.constraint_name = tc.constraint_name
+            WHERE 
+				pgc.relispartition = false AND
+                c.table_schema NOT IN ('information_schema', 'pg_catalog') 
+                AND c.table_name NOT IN ('migrations')
             ;"""
         )
 
