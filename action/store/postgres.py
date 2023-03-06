@@ -46,6 +46,7 @@ class PostgresStore(Store):
                     AND kcu.constraint_name = tc.constraint_name
             WHERE 
 				pgc.relispartition = false AND
+                pgc.relkind IN ('r','v','m','p') AND
                 c.table_schema NOT IN ('information_schema', 'pg_catalog') 
                 AND c.table_name NOT IN ('migrations')
             ;"""
