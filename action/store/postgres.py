@@ -31,6 +31,9 @@ class PostgresStore(Store):
                 c.data_type,
                 tc.constraint_type = 'PRIMARY KEY' as is_primary_key
             from information_schema.columns as c
+                join pg_class as pgc
+                    on c.table_schema = pgc.relnamespace::regnamespace::text
+                    and c.table_name = pgc.relname
                 left join information_schema.key_column_usage as kcu
                     on c.table_catalog = kcu.table_catalog
                     and c.table_schema = kcu.table_schema
@@ -41,8 +44,10 @@ class PostgresStore(Store):
                     and kcu.table_schema = tc.table_schema
                     and kcu.table_name = tc.table_name 
                     and kcu.constraint_name = tc.constraint_name
-            where 
-                c.table_schema not in ('information_schema', 'pg_catalog') 
+            where
+                pgc.relispartition = false
+                and pgc.relkind in ('r', 'v', 'm', 'p')
+                and c.table_schema not in ('information_schema', 'pg_catalog') 
                 and c.table_name not in ('migrations')
             ;"""
         )
