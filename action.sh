@@ -32,8 +32,14 @@ if [[ -z "$GITHUB_TOKEN" ]] || [[ -z "$GITHUB_PULL" ]]; then
     echo "WARNING: missing GITHUB_TOKEN or GITHUB_PULL, skipping git actions"
     SKIP_GIT=1
 fi
+if [[ -z "$REQUIRED_ROLES" ]]; then
+    echo "WARNING: missing REQUIRED_ROLES, consider adding them to the action config"
+fi
+
 
 DOCKER_CLEANUP=""
+
+ROLES_FILE_PATH="$ACTION_PATH/init_roles.sh"
 
 cleanup () {
     echo "Cleaning up..."
@@ -46,6 +52,15 @@ trap cleanup EXIT
 
 prepare () {
     pip3 install -r $ACTION_PATH/requirements.txt
+
+    # Overwrite roles file if it exists already
+    echo "#!/bin/bash" > $ROLES_FILE_PATH
+    echo "set -e" >> $ROLES_FILE_PATH
+
+    for ROLE in ${REQUIRED_ROLES}; do
+        echo echo "psql --username \"$DB_USER\" --dbname \"$DB_NAME\"  CREATE ROLE \"$ROLE\" LOGIN" >> $ROLES_FILE_PATH
+    done
+
 }
 
 generate () {
@@ -65,6 +80,7 @@ generate () {
 
             docker run -d \
                 -v $ACTION_PATH/containers/postgres/initdb.sh:/docker-entrypoint-initdb.d/initdb.sh \
+                -v $ROLES_FILE_PATH:/docker-entrypoint-initdb.d/init_roles.sh \
                 -p 5432:5432 \
                 -e POSTGRES_DB=${DB_NAME} \
                 -e POSTGRES_USER=${DB_USER} \
