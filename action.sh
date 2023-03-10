@@ -39,8 +39,6 @@ fi
 
 DOCKER_CLEANUP=""
 
-ROLES_FILE_PATH="$ACTION_PATH/init_roles.sh"
-
 cleanup () {
     echo "Cleaning up..."
     if [[ ! -z "$DOCKER_CLEANUP" ]]; then
