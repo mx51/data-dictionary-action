@@ -52,15 +52,6 @@ trap cleanup EXIT
 
 prepare () {
     pip3 install -r $ACTION_PATH/requirements.txt
-
-    # Overwrite roles file if it exists already
-    echo "#!/bin/bash" > $ROLES_FILE_PATH
-    echo "set -e" >> $ROLES_FILE_PATH
-
-    for ROLE in ${REQUIRED_ROLES}; do
-        echo echo "psql --username \"$DB_USER\" --dbname \"$DB_NAME\"  CREATE ROLE \"$ROLE\" LOGIN" >> $ROLES_FILE_PATH
-    done
-
 }
 
 generate () {
@@ -77,6 +68,17 @@ generate () {
             pip3 install -r ./requirements-postgres.txt
 
             postgres_container=data-dictionary-postgres
+
+            # Overwrite roles file if it exists already
+            echo "#!/bin/bash" > $ROLES_FILE_PATH
+            echo "set -e" >> $ROLES_FILE_PATH
+
+            for ROLE in ${REQUIRED_ROLES}; do
+                echo "psql --username \"$DB_USER\" --dbname \"$DB_NAME\" -c \"CREATE ROLE \\\"$ROLE\\\" LOGIN\"" >> $ROLES_FILE_PATH
+            done
+
+            echo "Roles to be created by roles script: $ROLES_FILE_PATH"
+            cat $ROLES_FILE_PATH
 
             docker run -d \
                 -v $ACTION_PATH/containers/postgres/initdb.sh:/docker-entrypoint-initdb.d/initdb.sh \
