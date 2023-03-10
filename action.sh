@@ -69,24 +69,13 @@ generate () {
 
             postgres_container=data-dictionary-postgres
 
-            # Overwrite roles file if it exists already
-            echo "#!/bin/bash" > $ROLES_FILE_PATH
-            echo "set -e" >> $ROLES_FILE_PATH
-
-            for ROLE in ${REQUIRED_ROLES}; do
-                echo "psql --username \"$DB_USER\" --dbname \"$DB_NAME\" -c \"CREATE ROLE \\\"$ROLE\\\" LOGIN\"" >> $ROLES_FILE_PATH
-            done
-
-            echo "Roles to be created by roles script: $ROLES_FILE_PATH"
-            cat $ROLES_FILE_PATH
-
             docker run -d \
                 -v $ACTION_PATH/containers/postgres/initdb.sh:/docker-entrypoint-initdb.d/initdb.sh \
-                -v $ROLES_FILE_PATH:/docker-entrypoint-initdb.d/init_roles.sh \
                 -p 5432:5432 \
                 -e POSTGRES_DB=${DB_NAME} \
                 -e POSTGRES_USER=${DB_USER} \
                 -e POSTGRES_PASSWORD=${DB_PASSWORD} \
+                -e REQUIRED_ROLES="${REQUIRED_ROLES}" \
                 --name $postgres_container \
                 postgres:14
 
