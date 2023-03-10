@@ -19,7 +19,7 @@ inputs:
     required: false
     default: ${{ github.token }}
   required-roles:
-    description: "Any user roles which the application expects to exist before migrating. Seprate with whitespace if multiple are required, eg `admin develop`."
+    description: "Any user roles which the application expects to exist before migrating. Separate with whitespace if multiple are required, e.g. `admin develop`."
     required: false
 
 runs:
