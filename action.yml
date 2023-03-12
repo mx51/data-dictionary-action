@@ -18,6 +18,9 @@ inputs:
     description: "GitHub auth token for pull request comments (NOT for commits)."
     required: false
     default: ${{ github.token }}
+  required-roles:
+    description: "Any user roles which the application expects to exist before migrating. Separate with whitespace if multiple are required, e.g. `admin develop`."
+    required: false
 
 runs:
   using: "composite"
@@ -32,5 +35,6 @@ runs:
         STORE_TYPE: ${{ inputs.store-type }}
         TOOL_TYPE: ${{ inputs.tool-type }}
         TOOL_PATH: ${{ inputs.tool-path }}
+        REQUIRED_ROLES: ${{ inputs.required-roles }}
         GITHUB_TOKEN: ${{ inputs.repo-token }}
         GITHUB_PULL: ${{ github.event.pull_request.number }}

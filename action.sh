@@ -32,6 +32,10 @@ if [[ -z "$GITHUB_TOKEN" ]] || [[ -z "$GITHUB_PULL" ]]; then
     echo "WARNING: missing GITHUB_TOKEN or GITHUB_PULL, skipping git actions"
     SKIP_GIT=1
 fi
+if [[ -z "$REQUIRED_ROLES" ]]; then
+    echo "WARNING: missing REQUIRED_ROLES, consider adding them to the action config"
+fi
+
 
 DOCKER_CLEANUP=""
 
@@ -69,6 +73,7 @@ generate () {
                 -e POSTGRES_DB=${DB_NAME} \
                 -e POSTGRES_USER=${DB_USER} \
                 -e POSTGRES_PASSWORD=${DB_PASSWORD} \
+                -e REQUIRED_ROLES="${REQUIRED_ROLES}" \
                 --name $postgres_container \
                 postgres:14
 
