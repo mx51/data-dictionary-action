@@ -2,7 +2,10 @@ FROM golang:1.17-alpine
 
 RUN apk update && apk add bash build-base
 
-RUN go get -v github.com/rubenv/sql-migrate/...
+ARG tool_type=rubenv-sql-migrate
+RUN if [ "$tool_type" = "rubenv-sql-migrate" ] ; then \
+    go get -v github.com/rubenv/sql-migrate/...; \
+  fi
 
 WORKDIR /
 

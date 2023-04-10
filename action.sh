@@ -88,8 +88,8 @@ generate () {
 
     case "$TOOL_TYPE" in
 
-        rubenv-sql-migrate)
-            docker build -t data-dictionary-golang ./containers/golang
+        rubenv-sql-migrate|service-cmd)
+            docker build -t data-dictionary-golang ./containers/golang --build-arg tool_type=$TOOL_TYPE
 
             docker run --rm \
                 -v $GITHUB_WORKSPACE:/workspace \
