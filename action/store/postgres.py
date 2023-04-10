@@ -49,6 +49,7 @@ class PostgresStore(Store):
                 and pgc.relkind in ('r', 'v', 'm', 'p')
                 and c.table_schema not in ('information_schema', 'pg_catalog') 
                 and c.table_name not in ('migrations')
+                and c.table_name not like '%_goose'
             ;"""
         )
 
