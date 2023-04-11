@@ -51,7 +51,7 @@ class PostgresStore(Store):
                 pgc.relispartition = false
                 and pgc.relkind in ('r', 'v', 'm', 'p')
                 and c.table_schema not in ('information_schema', 'pg_catalog') 
-                and (cardinality(%(exclude)s::text[]) = 0 or c.table_name != any(%(exclude)s))
+                and (c.table_name != any(%(exclude)s) or cardinality(%(exclude)s::text[]) = 0)
             ;""",
             {"exclude": self.meta["excluded_tables"]},
         )
@@ -90,12 +90,10 @@ class PostgresStore(Store):
             table["fields"] = fields
             table_lookup[table_key] = table
 
-        metacopy = self.meta.copy()
-        metacopy.pop("excluded_tables", None)
-        return {
-            **metacopy,
-            "tables": self._table_lookup_to_list(table_lookup),
-        }
+        meta = self.meta.copy()
+        meta.pop("excluded_tables", None)
+        meta["tables"] = self._table_lookup_to_list(table_lookup)
+        return meta
 
     @staticmethod
     def _table_lookup_to_list(table_lookup: Dict[Tuple, Dict]) -> list:
