@@ -53,7 +53,7 @@ class PostgresStore(Store):
                 and c.table_schema not in ('information_schema', 'pg_catalog') 
                 and (cardinality(%(exclude)s::text[]) = 0 or c.table_name != any(%(exclude)s))
             ;""",
-            {"exclude":self.meta["excluded_tables"]},
+            {"exclude": self.meta["excluded_tables"]},
         )
 
         table_lookup: Dict[Tuple, Dict] = {}
@@ -91,7 +91,7 @@ class PostgresStore(Store):
             table_lookup[table_key] = table
 
         metacopy = self.meta.copy()
-        metacopy.pop("excluded_tables",None)
+        metacopy.pop("excluded_tables", None)
         return {
             **metacopy,
             "tables": self._table_lookup_to_list(table_lookup),
