@@ -22,7 +22,6 @@ class PostgresStore(Store):
 
     def read(self) -> dict:
         cur = self.conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        exclude = self.meta["excluded_tables"]
         cur.execute(
             """
             select
@@ -52,10 +51,9 @@ class PostgresStore(Store):
                 pgc.relispartition = false
                 and pgc.relkind in ('r', 'v', 'm', 'p')
                 and c.table_schema not in ('information_schema', 'pg_catalog') 
-                and c.table_name not in ('migrations')
                 and c.table_name != any(%s)
             ;""",
-            [exclude],
+            [self.meta["excluded_tables"]],
         )
 
         table_lookup: Dict[Tuple, Dict] = {}
@@ -92,8 +90,10 @@ class PostgresStore(Store):
             table["fields"] = fields
             table_lookup[table_key] = table
 
+        metacopy = self.meta.copy()
+        metacopy.pop("excluded_tables",None)
         return {
-            **self.meta,
+            **metacopy,
             "tables": self._table_lookup_to_list(table_lookup),
         }
 

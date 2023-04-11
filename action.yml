@@ -14,6 +14,9 @@ inputs:
   tool-path:
     description: "Path to the data tool files (e.g. migration)."
     required: true
+  exclude-tables:
+    description: "Comma-seperated table names to exclude from dictionary."
+    required: false
   repo-token:
     description: "GitHub auth token for pull request comments (NOT for commits)."
     required: false
