@@ -5,10 +5,13 @@ from .base import Store
 
 
 class PostgresStore(Store):
-    def __init__(self, name: str, database: str, user: str, password: str):
+    def __init__(
+        self, name: str, database: str, user: str, password: str, exclude_tables: list
+    ):
         self.meta = {
             "name": name,
             "type": "postgres",
+            "excluded_tables": exclude_tables,
         }
         self.conn = psycopg2.connect(
             host="localhost",
@@ -19,6 +22,7 @@ class PostgresStore(Store):
 
     def read(self) -> dict:
         cur = self.conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        exclude = self.meta["excluded_tables"]
         cur.execute(
             """
             select
@@ -49,8 +53,9 @@ class PostgresStore(Store):
                 and pgc.relkind in ('r', 'v', 'm', 'p')
                 and c.table_schema not in ('information_schema', 'pg_catalog') 
                 and c.table_name not in ('migrations')
-                and c.table_name not like '%_goose'
-            ;"""
+                and c.table_name != any(%s)
+            ;""",
+            [exclude],
         )
 
         table_lookup: Dict[Tuple, Dict] = {}

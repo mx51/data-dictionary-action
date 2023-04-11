@@ -39,15 +39,10 @@ EOF
         sql-migrate up
         ;;
 
-    service-cmd)
-        echo $DB_NAME
-        cd ./workspace && go build -o ./bin/migrate ./${TOOL_PATH}
+    shell-script)
         export DB_HOST=172.17.0.1
         export DB_PORT=5432
-        export DB_PASS=${DB_PASSWORD}
-        export DB_MIGRATION_USER=${DB_USER}
-        export DB_MIGRATION_PASS=${DB_PASSWORD}
-        ./bin/migrate --force-db-name ${DB_NAME}
+        cd ./workspace && sh ./${TOOL_PATH}
         ;;
 
     *)

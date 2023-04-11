@@ -35,6 +35,11 @@ fi
 if [[ -z "$REQUIRED_ROLES" ]]; then
     echo "WARNING: missing REQUIRED_ROLES, consider adding them to the action config"
 fi
+if [[ -z "$EXCLUDE_TABLES" ]]; then
+    if [ "$TOOL_TYPE" = "rubenv-sql-migrate" ]; then
+        export EXCLUDE_TABLES=migrations
+    fi
+fi
 
 
 DOCKER_CLEANUP=""
@@ -88,7 +93,7 @@ generate () {
 
     case "$TOOL_TYPE" in
 
-        rubenv-sql-migrate|service-cmd)
+        rubenv-sql-migrate|shell-script)
             docker build -t data-dictionary-golang ./containers/golang --build-arg tool_type=$TOOL_TYPE
 
             docker run --rm \

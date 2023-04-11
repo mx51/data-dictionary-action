@@ -33,6 +33,7 @@ runs:
       env:
         STORE_NAME: ${{ inputs.store-name }}
         STORE_TYPE: ${{ inputs.store-type }}
+        EXCLUDE_TABLES: ${{ inputs.exclude-tables }}
         TOOL_TYPE: ${{ inputs.tool-type }}
         TOOL_PATH: ${{ inputs.tool-path }}
         REQUIRED_ROLES: ${{ inputs.required-roles }}
