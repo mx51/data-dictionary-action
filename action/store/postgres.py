@@ -51,9 +51,9 @@ class PostgresStore(Store):
                 pgc.relispartition = false
                 and pgc.relkind in ('r', 'v', 'm', 'p')
                 and c.table_schema not in ('information_schema', 'pg_catalog') 
-                and c.table_name != any(%s)
+                and (cardinality(%(exclude)s::text[]) = 0 or c.table_name != any(%(exclude)s))
             ;""",
-            [self.meta["excluded_tables"]],
+            {"exclude":self.meta["excluded_tables"]},
         )
 
         table_lookup: Dict[Tuple, Dict] = {}
