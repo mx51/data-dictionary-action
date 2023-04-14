@@ -11,7 +11,7 @@ class PostgresStore(Store):
         self.meta = {
             "name": name,
             "type": "postgres",
-            "excluded_tables": exclude_tables,
+            "exclude_tables": exclude_tables,
         }
         self.conn = psycopg2.connect(
             host="localhost",
@@ -22,6 +22,12 @@ class PostgresStore(Store):
 
     def read(self) -> dict:
         cur = self.conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        exclude_condition = ";"
+        args = {}
+        if len(self.meta["exclude_tables"]) > 0:
+            exclude_condition = "and (c.table_name != any(%(exclude)s));"
+            args = {"exclude": self.meta["exclude_tables"]}
+
         cur.execute(
             """
             select
@@ -50,10 +56,10 @@ class PostgresStore(Store):
             where
                 pgc.relispartition = false
                 and pgc.relkind in ('r', 'v', 'm', 'p')
-                and c.table_schema not in ('information_schema', 'pg_catalog') 
-                and (c.table_name != any(%(exclude)s) or cardinality(%(exclude)s::text[]) = 0)
-            ;""",
-            {"exclude": self.meta["excluded_tables"]},
+                and c.table_schema not in ('information_schema', 'pg_catalog')
+                """
+            + exclude_condition,
+            args,
         )
 
         table_lookup: Dict[Tuple, Dict] = {}
@@ -91,7 +97,7 @@ class PostgresStore(Store):
             table_lookup[table_key] = table
 
         meta = self.meta.copy()
-        meta.pop("excluded_tables", None)
+        meta.pop("exclude_tables", None)
         meta["tables"] = self._table_lookup_to_list(table_lookup)
         return meta
 
