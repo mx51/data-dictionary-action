@@ -22,14 +22,14 @@ class PostgresStore(Store):
 
     def read(self) -> dict:
         cur = self.conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        exclude_condition = ";"
+        exclude_condition = ""
         args = {}
         if len(self.meta["exclude_tables"]) > 0:
-            exclude_condition = "and (c.table_name != any(%(exclude)s));"
-            args = {"exclude": self.meta["exclude_tables"]}
+            exclude_condition = "and (c.table_name != any(%(exclude_tables)s))"
+            args["exclude_tables"] = self.meta["exclude_tables"]
 
         cur.execute(
-            """
+            f"""
             select
                 c.table_schema,
                 c.table_name,
@@ -57,8 +57,8 @@ class PostgresStore(Store):
                 pgc.relispartition = false
                 and pgc.relkind in ('r', 'v', 'm', 'p')
                 and c.table_schema not in ('information_schema', 'pg_catalog')
-                """
-            + exclude_condition,
+                {exclude_condition};
+            """,
             args,
         )
 
