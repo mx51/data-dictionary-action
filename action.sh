@@ -35,6 +35,11 @@ fi
 if [[ -z "$REQUIRED_ROLES" ]]; then
     echo "WARNING: missing REQUIRED_ROLES, consider adding them to the action config"
 fi
+if [[ -z "$EXCLUDE_TABLES" ]]; then
+    if [ "$TOOL_TYPE" = "rubenv-sql-migrate" ]; then
+        export EXCLUDE_TABLES=migrations
+    fi
+fi
 
 
 DOCKER_CLEANUP=""
@@ -88,8 +93,8 @@ generate () {
 
     case "$TOOL_TYPE" in
 
-        rubenv-sql-migrate)
-            docker build -t data-dictionary-golang ./containers/golang
+        rubenv-sql-migrate|shell-script)
+            docker build -t data-dictionary-golang ./containers/golang --build-arg tool_type=$TOOL_TYPE
 
             docker run --rm \
                 -v $GITHUB_WORKSPACE:/workspace \
@@ -141,12 +146,6 @@ if [[ -z "$SKIP_GIT" ]]; then
     if ! git diff --name-only HEAD~1 HEAD > /dev/null ; then
         echo "Failed to fetch HEAD~1, ensure actions/checkout fetch-depth is 2 or more..."
         exit 1
-    fi
-
-    # Only do anything when relevant files changed
-    if ! git diff --name-only HEAD~1 HEAD | grep -E "^data.json|^$TOOL_PATH" > /dev/null ; then
-        echo "No relevant changes detected in last commit, exiting..."
-        exit 0
     fi
 fi
 

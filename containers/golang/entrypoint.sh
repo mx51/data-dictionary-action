@@ -39,6 +39,12 @@ EOF
         sql-migrate up
         ;;
 
+    shell-script)
+        export DB_HOST=172.17.0.1
+        export DB_PORT=5432
+        cd ./workspace && sh ./${TOOL_PATH}
+        ;;
+
     *)
         echo "ERROR: no tool type for '$TOOL_TYPE'"
         exit 2

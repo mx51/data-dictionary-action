@@ -33,6 +33,9 @@ if args.command == "generate":
             database=os.environ["DB_NAME"],
             user=os.environ["DB_USER"],
             password=os.environ["DB_PASSWORD"],
+            exclude_tables=list(
+                filter(None, os.getenv("EXCLUDE_TABLES", "").split(","))
+            ),
         )
     else:
         raise ValueError(f"Store {store_type} not found")
