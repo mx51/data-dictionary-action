@@ -49,7 +49,7 @@ jobs:
 For local development, ensure the following are installed:
 
 - Docker
-- Python 3.8+
+- Python 3.10+
 
 The following environment variables are required to be set (e.g. `.env` file):
 
