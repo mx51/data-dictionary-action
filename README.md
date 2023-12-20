@@ -11,6 +11,8 @@ GitHub Action for generating and checking freshness of `data.json` data dictiona
     - [`rubenv-sql-migrate`](https://github.com/rubenv/sql-migrate)
 * `tool-path` - Path to the data tool files (e.g. migration).
 * `repo-token` - GitHub auth token for pull request comments (NOT for commits).
+* `data-dictionary-app-id` - Data Dictionary GitHub App ID.
+* `data-dictionary-app-private-key` - Data Dictionary GitHub App private key.
 
 ## Example
 
@@ -42,6 +44,8 @@ jobs:
           store-type: postgres
           tool-type: rubenv-sql-migrate
           tool-path: schema
+          data-dictionary-app-id: ${{ secrets.DATA_DICTIONARY_APP_ID }}
+          data-dictionary-app-private-key: ${{ secrets.DATA_DICTIONARY_APP_PRIVATE_KEY }}
 ```
 
 ## Development
