@@ -31,15 +31,15 @@ inputs:
     description: "Any user roles which the application expects to exist before migrating. Separate with whitespace if multiple are required, e.g. `admin develop`."
     required: false
   data-dictionary-repo:
-    description: "Name of the data dictionary repo"
+    description: "Name of the Data Dictionary repo"
     required: false
     default: "data-dictionary"
   data-dictionary-ref:
-    description: "Ref of the data dictionary repo"
+    description: "Ref of the Data Dictionary repo"
     required: false
     default: "master"
   data-dictionary-workflow:
-    description: "Name of the data dictionary build workflow"
+    description: "Name of the Data Dictionary build workflow"
     required: false
     default: "build.yml"
 
