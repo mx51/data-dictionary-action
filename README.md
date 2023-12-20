@@ -10,12 +10,12 @@ GitHub Action for generating and checking freshness of `data.json` data dictiona
 * `tool-type` - Type of the data tool (e.g. migration).
     - [`rubenv-sql-migrate`](https://github.com/rubenv/sql-migrate)
 * `tool-path` - Path to the data tool files (e.g. migration).
-* `data-dictionary-app-id` - Data Dictionary GitHub App ID.
-* `data-dictionary-app-private-key` - Data Dictionary GitHub App private key.
+* `dictionary-app-id` - Dictionary GitHub App ID.
+* `dictionary-app-private-key` - Dictionary GitHub App private key.
 * `repo-token` - GitHub auth token for pull request comments (NOT for commits). Defaults to `${{ github.token }}`.
-* `data-dictionary-repo` - Data Dictionary repo name. Defaults to `data-dictionary`.
-* `data-dictionary-ref` - Data Dictionary branch reference. Defaults to `master`.
-* `data-dictionary-workflow` - Data Dictionary workflow name. Defaults to `build.yml`.
+* `dictionary-repo` - Dictionary repo name. Defaults to `data-dictionary`.
+* `dictionary-ref` - Dictionary branch reference. Defaults to `master`.
+* `dictionary-workflow` - Dictionary workflow name. Defaults to `build.yml`.
 
 ## Example
 
@@ -47,8 +47,8 @@ jobs:
           store-type: postgres
           tool-type: rubenv-sql-migrate
           tool-path: schema
-          data-dictionary-app-id: ${{ secrets.DATA_DICTIONARY_APP_ID }}
-          data-dictionary-app-private-key: ${{ secrets.DATA_DICTIONARY_APP_PRIVATE_KEY }}
+          dictionary-app-id: ${{ secrets.DATA_DICTIONARY_APP_ID }}
+          dictionary-app-private-key: ${{ secrets.DATA_DICTIONARY_APP_PRIVATE_KEY }}
 ```
 
 ## Development

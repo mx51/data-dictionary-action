@@ -14,11 +14,11 @@ inputs:
   tool-path:
     description: "Path to the data tool files (e.g. migration)."
     required: true
-  data-dictionary-app-id:
-    description: "Data Dictionary GitHub App ID"
+  dictionary-app-id:
+    description: "Dictionary GitHub App ID"
     required: true
-  data-dictionary-app-private-key:
-    description: "Data Dictionary GitHub App private key"
+  dictionary-app-private-key:
+    description: "Dictionary GitHub App private key"
     required: true
   exclude-tables:
     description: "Comma-separated table names to exclude from dictionary."
@@ -30,23 +30,23 @@ inputs:
   required-roles:
     description: "Any user roles which the application expects to exist before migrating. Separate with whitespace if multiple are required, e.g. `admin develop`."
     required: false
-  data-dictionary-repo:
-    description: "Name of the Data Dictionary repo"
+  dictionary-repo:
+    description: "Name of the Dictionary repo"
     required: false
     default: "data-dictionary"
-  data-dictionary-ref:
-    description: "Ref of the Data Dictionary repo"
+  dictionary-ref:
+    description: "Ref of the Dictionary repo"
     required: false
     default: "master"
-  data-dictionary-workflow:
-    description: "Name of the Data Dictionary build workflow"
+  dictionary-workflow:
+    description: "Name of the Dictionary build workflow"
     required: false
     default: "build.yml"
 
 runs:
   using: "composite"
   steps:
-    - run: python -m pip install -r ${{ github.action_path }}/requirements.txt
+    - run: pip3 install -r ${{ github.action_path }}/requirements.txt
       if: ${{ github.event_name == 'pull_request' }}
       shell: bash
 
@@ -68,11 +68,11 @@ runs:
       uses: actions/create-github-app-token@v1
       if: ${{ startsWith(github.ref, 'refs/tags/') }}
       with:
-        app-id: ${{ inputs.data-dictionary-app-id }}
-        private-key: ${{ inputs.data-dictionary-app-private-key }}
+        app-id: ${{ inputs.dictionary-app-id }}
+        private-key: ${{ inputs.dictionary-app-private-key }}
         owner: ${{ github.repository_owner }}
 
-    - name: Trigger data dictionary build
+    - name: Trigger Dictionary build
       uses: actions/github-script@v6
       if: ${{ startsWith(github.ref, 'refs/tags/') }}
       with:
@@ -80,8 +80,8 @@ runs:
         script: |
           github.rest.actions.createWorkflowDispatch({
             owner: '${{ github.repository_owner }}',
-            repo: '${{ inputs.data-dictionary-repo }}',
-            workflow_id: '${{ inputs.data-dictionary-workflow }}',
-            ref: '${{ inputs.data-dictionary-ref }}',
+            repo: '${{ inputs.dictionary-repo }}',
+            workflow_id: '${{ inputs.dictionary-workflow }}',
+            ref: '${{ inputs.dictionary-ref }}',
             inputs: {'source': '${{ github.repository }}'},
           })
