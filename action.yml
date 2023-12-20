@@ -14,8 +14,14 @@ inputs:
   tool-path:
     description: "Path to the data tool files (e.g. migration)."
     required: true
+  dictionary-app-id:
+    description: "Dictionary GitHub App ID"
+    required: true
+  dictionary-app-private-key:
+    description: "Dictionary GitHub App private key"
+    required: true
   exclude-tables:
-    description: "Comma-seperated table names to exclude from dictionary."
+    description: "Comma-separated table names to exclude from dictionary."
     required: false
   repo-token:
     description: "GitHub auth token for pull request comments (NOT for commits)."
@@ -24,14 +30,28 @@ inputs:
   required-roles:
     description: "Any user roles which the application expects to exist before migrating. Separate with whitespace if multiple are required, e.g. `admin develop`."
     required: false
+  dictionary-repo:
+    description: "Name of the Dictionary repo"
+    required: false
+    default: "data-dictionary"
+  dictionary-ref:
+    description: "Ref of the Dictionary repo"
+    required: false
+    default: "master"
+  dictionary-workflow:
+    description: "Name of the Dictionary build workflow"
+    required: false
+    default: "build.yml"
 
 runs:
   using: "composite"
   steps:
     - run: pip3 install -r ${{ github.action_path }}/requirements.txt
+      if: ${{ github.event_name == 'pull_request' }}
       shell: bash
 
     - run: ${{ github.action_path }}/action.sh
+      if: ${{ github.event_name == 'pull_request' }}
       shell: bash
       env:
         STORE_NAME: ${{ inputs.store-name }}
@@ -42,3 +62,26 @@ runs:
         REQUIRED_ROLES: ${{ inputs.required-roles }}
         GITHUB_TOKEN: ${{ inputs.repo-token }}
         GITHUB_PULL: ${{ github.event.pull_request.number }}
+
+    - name: Generate a token
+      id: generate-token
+      uses: actions/create-github-app-token@v1
+      if: ${{ startsWith(github.ref, 'refs/tags/') }}
+      with:
+        app-id: ${{ inputs.dictionary-app-id }}
+        private-key: ${{ inputs.dictionary-app-private-key }}
+        owner: ${{ github.repository_owner }}
+
+    - name: Trigger Dictionary build
+      uses: actions/github-script@v6
+      if: ${{ startsWith(github.ref, 'refs/tags/') }}
+      with:
+        github-token: ${{ steps.generate-token.outputs.token }}
+        script: |
+          github.rest.actions.createWorkflowDispatch({
+            owner: '${{ github.repository_owner }}',
+            repo: '${{ inputs.dictionary-repo }}',
+            workflow_id: '${{ inputs.dictionary-workflow }}',
+            ref: '${{ inputs.dictionary-ref }}',
+            inputs: {'source': '${{ github.repository }}'},
+          })
