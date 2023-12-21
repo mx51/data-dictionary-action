@@ -66,7 +66,7 @@ runs:
     - name: Generate a token
       id: generate-token
       uses: actions/create-github-app-token@v1
-      if: ${{ startsWith(github.ref, 'refs/tags/') }}
+      if: ${{ github.ref == 'refs/heads/master' }}
       with:
         app-id: ${{ inputs.dictionary-app-id }}
         private-key: ${{ inputs.dictionary-app-private-key }}
@@ -74,7 +74,7 @@ runs:
 
     - name: Trigger Dictionary build
       uses: actions/github-script@v6
-      if: ${{ startsWith(github.ref, 'refs/tags/') }}
+      if: ${{ github.ref == 'refs/heads/master' }}
       with:
         github-token: ${{ steps.generate-token.outputs.token }}
         script: |
