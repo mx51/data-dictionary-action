@@ -2,8 +2,6 @@ FROM golang:1.21-alpine
 
 RUN apk update && apk add bash build-base
 
-
-
 ARG tool_type=rubenv-sql-migrate
 RUN if [ "$tool_type" = "rubenv-sql-migrate" ]; then \
     # CGO_CFLAGS is a temporary fix for https://github.com/mattn/go-sqlite3/pull/1177. We can remove this once rubenv-sql-migrate is updated to use the patched version of go-sqllite3.
