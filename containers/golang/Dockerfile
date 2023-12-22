@@ -1,6 +1,8 @@
-FROM golang:1.20-alpine
+FROM golang:1.21-alpine
 
 RUN apk update && apk add bash build-base
+
+ENV CGO_CFLAGS="-D_LARGEFILE64_SOURCE"
 
 ARG tool_type=rubenv-sql-migrate
 RUN if [ "$tool_type" = "rubenv-sql-migrate" ]; then \
