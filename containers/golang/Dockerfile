@@ -4,7 +4,7 @@ RUN apk update && apk add bash build-base
 
 ARG tool_type=rubenv-sql-migrate
 RUN if [ "$tool_type" = "rubenv-sql-migrate" ]; then \
-    go install github.com/rubenv/sql-migrate/...@latest; \
+    go install github.com/rubenv/sql-migrate/...@v1.5.2; \
   fi
 
 WORKDIR /
