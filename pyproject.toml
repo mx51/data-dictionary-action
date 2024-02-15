@@ -9,3 +9,8 @@ ignore_missing_imports = true
 
 [tool.pylint.master]
 disable = ["R", "C"]
+
+[tool.isort]
+profile = "black"
+src_paths = ["action"]
+skip_gitignore = true
