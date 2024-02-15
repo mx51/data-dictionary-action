@@ -1,7 +1,9 @@
-import logging
 import json
-import requests
+import logging
 from typing import Optional
+
+import requests
+
 from .base import Command
 
 

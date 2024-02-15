@@ -1,6 +1,7 @@
-from typing import Optional, List
-from .base import Command
+from typing import List, Optional
+
 from ..store import Store
+from .base import Command
 
 
 class Generate(Command):

@@ -1,5 +1,5 @@
-import logging
 import json
+import logging
 from abc import ABCMeta, abstractmethod
 from pathlib import Path
 from typing import Optional

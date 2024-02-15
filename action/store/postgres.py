@@ -1,6 +1,8 @@
+from typing import Any, Dict, Tuple
+
 import psycopg2
 import psycopg2.extras
-from typing import Tuple, Dict, Any
+
 from .base import Store
 
 

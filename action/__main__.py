@@ -1,7 +1,8 @@
-import os
-import sys
 import argparse
 import logging
+import os
+import sys
+
 from .command import Generate, Validate
 
 logging.basicConfig(
