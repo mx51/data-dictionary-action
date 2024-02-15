@@ -9,12 +9,24 @@ requirements:
 	pip3 install -r requirements-postgres.txt
 .PHONY: requirements
 
-fmt:
+fix-fmt:
 	black .
+.PHONY: fix-fmt
+
+fix-imports:
+	isort .
+.PHONY: fix-imports
+
+fix: fix-imports fix-fmt
+.PHONY: fix
 
 check-fmt:
 	black --check .
 .PHONY: check-fmt
+
+check-imports:
+	isort --check .
+.PHONY: check-imports
 
 check-lint:
 	pylint action
@@ -24,7 +36,7 @@ check-type:
 	mypy action
 .PHONY: check-type
 
-check: check-fmt check-lint check-type
+check: check-fmt check-imports check-lint check-type
 .PHONY: check
 
 run:
