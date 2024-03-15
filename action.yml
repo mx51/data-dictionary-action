@@ -83,5 +83,4 @@ runs:
             repo: '${{ inputs.dictionary-repo }}',
             workflow_id: '${{ inputs.dictionary-workflow }}',
             ref: '${{ inputs.dictionary-ref }}',
-            inputs: {'source': '${{ github.repository }}'},
           })
