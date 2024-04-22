@@ -1,10 +1,12 @@
-FROM golang:1.21-alpine
+FROM golang:1.22-alpine
 
-RUN apk update && apk add bash build-base
+RUN apk update && apk add bash build-base git
+
+RUN go env -w GOFLAGS="-buildvcs=false"
 
 ARG tool_type=rubenv-sql-migrate
 RUN if [ "$tool_type" = "rubenv-sql-migrate" ]; then \
-    CGO_CFLAGS="-D_LARGEFILE64_SOURCE" go install github.com/rubenv/sql-migrate/...@latest; \
+    go install github.com/rubenv/sql-migrate/...@latest; \
   fi
 
 WORKDIR /

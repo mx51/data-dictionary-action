@@ -104,6 +104,7 @@ generate () {
                 -e DB_NAME \
                 -e DB_USER \
                 -e DB_PASSWORD \
+                -e GITHUB_TOKEN \
                 --name data-dictionary-golang \
                 data-dictionary-golang
             ;;
