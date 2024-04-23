@@ -42,6 +42,7 @@ EOF
     shell-script)
         export DB_HOST=172.17.0.1
         export DB_PORT=5432
+        git config --global url."https://git:${GITHUB_TOKEN}@github.com/".insteadOf "https://github.com/"
         cd ./workspace && sh ./${TOOL_PATH}
         ;;
 
