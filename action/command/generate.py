@@ -36,7 +36,9 @@ class Generate(Command):
         store = self.store.read()
 
         if self.proto_path:
-            proto_reader = ProtoReader(proto_path=self._workspace / Path(self.proto_path))
+            proto_reader = ProtoReader(
+                proto_path=self._workspace / Path(self.proto_path)
+            )
             proto = proto_reader.read()
         else:
             proto = {}
