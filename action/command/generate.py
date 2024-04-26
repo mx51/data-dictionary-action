@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import List, Optional
 
 from ..proto import ProtoReader
@@ -24,9 +25,7 @@ class Generate(Command):
         super().__init__(workspace=workspace)
         self.store = store
         self.source = source
-        self.proto_reader = ProtoReader(
-            workspace=self._workspace, proto_path_str=proto_path
-        )
+        self.proto_path = proto_path
 
     def execute(self):
         """Read sources and update the data dictionary."""
@@ -35,7 +34,12 @@ class Generate(Command):
             data = {}
 
         store = self.store.read()
-        proto = self.proto_reader.read()
+
+        if self.proto_path:
+            proto_reader = ProtoReader(proto_path=self._workspace / Path(self.proto_path))
+            proto = proto_reader.read()
+        else:
+            proto = {}
 
         self.merge_data(data, store, proto)
         self.write_data(data)
