@@ -1,30 +1,54 @@
 from typing import List, Optional
 
+from ..proto import ProtoReader
 from ..store import Store
 from .base import Command
 
 
 class Generate(Command):
-    def __init__(self, workspace: str, store: Store, source: dict):
-        super().__init__(workspace)
+    def __init__(
+        self,
+        workspace: str,
+        store: Store,
+        source: dict,
+        proto_path: Optional[str] = "",
+    ):
+        """Creates a new instance of Generate.
+
+        Args:
+            workspace (str): The workspace to generate on.
+            store (Store): The store name.
+            source (dict): The source name.
+            proto_path (str, optional): Path to the proto files. Defaults to "".
+        """
+        super().__init__(workspace=workspace)
         self.store = store
         self.source = source
+        self.proto_reader = ProtoReader(
+            workspace=self._workspace, proto_path_str=proto_path
+        )
 
     def execute(self):
+        """Read sources and update the data dictionary."""
         data = self.read_data()
         if data is None:
             data = {}
 
         store = self.store.read()
+        proto = self.proto_reader.read()
 
-        self.merge_data(data, store)
+        self.merge_data(data, store, proto)
         self.write_data(data)
 
-    def merge_data(self, data: dict, store: dict):
-        data["source"] = {
-            **data.get("source", {}),
-            **self.source,
-        }
+    def merge_data(self, data: dict, store: dict, proto: dict):
+        """Merge new data in the data dictionary.
+
+        Args:
+            data (dict): Existing data dictionary.
+            store (dict): Store data.
+            proto (dict): Proto data.
+        """
+        data["source"] = data.get("source", {}) | self.source
 
         self._sort_store(store)
 
@@ -60,6 +84,10 @@ class Generate(Command):
                             target=field,
                             exclude=("data_type", "nullable", "primary_key", "default"),
                         )
+                    if proto_type := field.get("proto_type"):
+                        proto_values = proto.get(proto_type)
+                        if proto_values:
+                            field["values"] = proto_values
 
         existing_store["tables"] = tables
 

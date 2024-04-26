@@ -23,6 +23,7 @@ class Validate(Command):
         self.github_commit = github_commit
 
     def execute(self):
+        """Validates that the data dictionary contains expected attributes."""
         errors = []
 
         data = self.read_data()
@@ -54,6 +55,11 @@ class Validate(Command):
 
                     if not field.get("description"):
                         error = f"Missing description in field `{field_path}`"
+                        logging.error(error)
+                        errors.append(error)
+
+                    if field.get("proto_type") and not field.get("values"):
+                        error = f"Missing values in field `{field_path}`"
                         logging.error(error)
                         errors.append(error)
 

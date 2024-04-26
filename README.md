@@ -10,12 +10,13 @@ GitHub Action for generating and checking freshness of `data.json` data dictiona
 * `tool-type` - Type of the data tool (e.g. migration).
     - [`rubenv-sql-migrate`](https://github.com/rubenv/sql-migrate)
 * `tool-path` - Path to the data tool files (e.g. migration).
+* `proto-path` - Path to services proto files.
 * `dictionary-app-id` - Dictionary GitHub App ID.
 * `dictionary-app-private-key` - Dictionary GitHub App private key.
-* `repo-token` - GitHub auth token for pull request comments (NOT for commits). Defaults to `${{ github.token }}`.
 * `dictionary-repo` - Dictionary repo name. Defaults to `data-dictionary`.
 * `dictionary-ref` - Dictionary branch reference. Defaults to `master`.
 * `dictionary-workflow` - Dictionary workflow name. Defaults to `build.yml`.
+* `repo-token` - GitHub auth token for pull request comments (NOT for commits). Defaults to `${{ github.token }}`.
 
 ## Example
 
