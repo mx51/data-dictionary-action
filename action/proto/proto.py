@@ -10,8 +10,8 @@ class ProtoReader:
         """Create a new ProtoReader instance.
 
         Args:
-            workspace (Path): The path of the workspace
-            proto_path_str (str, optional): The path of the proto files.
+            workspace (Path): The path of the workspace.
+            proto_path_str (str, optional): The path to the proto files.
         """
         self.proto_code_dict = {}
         if proto_path_str:
@@ -34,7 +34,7 @@ class ProtoReader:
         """Reads enums from proto code.
 
         Args:
-            proto_code (str): Proto code string.
+            proto_code (str): Proto code as a string.
 
         Returns:
             dict[str, dict[str,str]]: Parsed enums as a dictionary.

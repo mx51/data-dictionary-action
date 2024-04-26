@@ -17,7 +17,7 @@ class Generate(Command):
 
         Args:
             workspace (str): The workspace to generate on.
-            store (Store): The store name.
+            store (Store): The store instance.
             source (dict): The source name.
             proto_path (str, optional): Path to the proto files. Defaults to "".
         """
@@ -41,7 +41,7 @@ class Generate(Command):
         self.write_data(data)
 
     def merge_data(self, data: dict, store: dict, proto: dict):
-        """Merge new data in the data dictionary.
+        """Merge new data into the data dictionary.
 
         Args:
             data (dict): Existing data dictionary.
