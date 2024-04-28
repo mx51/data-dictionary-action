@@ -7,7 +7,8 @@ from typing import Optional
 
 class Command(metaclass=ABCMeta):
     def __init__(self, workspace: str):
-        self.data_path = Path(workspace) / "data.json"
+        self._workspace = Path(workspace)
+        self.data_path = self._workspace / "data.json"
 
     @abstractmethod
     def execute(self):

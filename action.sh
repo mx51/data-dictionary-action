@@ -35,6 +35,9 @@ fi
 if [[ -z "$REQUIRED_ROLES" ]]; then
     echo "WARNING: missing REQUIRED_ROLES, consider adding them to the action config"
 fi
+if [[ -z "$PROTO_PATH" ]]; then
+    echo "INFO: missing PROTO_PATH, skipping reading proto files for values"
+fi
 if [[ -z "$EXCLUDE_TABLES" ]]; then
     if [ "$TOOL_TYPE" = "rubenv-sql-migrate" ]; then
         export EXCLUDE_TABLES=migrations

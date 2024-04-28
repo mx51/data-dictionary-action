@@ -23,6 +23,9 @@ inputs:
   exclude-tables:
     description: "Comma-separated table names to exclude from dictionary."
     required: false
+  proto-path:
+    description: "Path to the proto files."
+    required: false
   repo-token:
     description: "GitHub auth token for pull request comments (NOT for commits)."
     required: false
@@ -59,6 +62,7 @@ runs:
         EXCLUDE_TABLES: ${{ inputs.exclude-tables }}
         TOOL_TYPE: ${{ inputs.tool-type }}
         TOOL_PATH: ${{ inputs.tool-path }}
+        PROTO_PATH: ${{ inputs.proto-path }}
         REQUIRED_ROLES: ${{ inputs.required-roles }}
         GITHUB_TOKEN: ${{ inputs.repo-token }}
         GITHUB_PULL: ${{ github.event.pull_request.number }}

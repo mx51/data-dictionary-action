@@ -18,6 +18,7 @@ parser.add_argument(
 )
 args = parser.parse_args(args=sys.argv[1:])
 
+PROTO_PATH = os.getenv("PROTO_PATH")
 GITHUB_WORKSPACE = os.environ["GITHUB_WORKSPACE"]
 GITHUB_REPOSITORY = os.environ["GITHUB_REPOSITORY"]
 GITHUB_REPOSITORY_NAME = GITHUB_REPOSITORY.split("/").pop()
@@ -44,6 +45,7 @@ if args.command == "generate":
     Generate(
         workspace=GITHUB_WORKSPACE,
         store=store,
+        proto_path=PROTO_PATH,
         source={
             "name": GITHUB_REPOSITORY_NAME,
             "url": GITHUB_REPOSITORY_URL,
