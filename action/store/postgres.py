@@ -117,6 +117,12 @@ class PostgresStore(Store):
             # Unwrap value cast to text as a string
             value = value[0 : -len("::text")]
             if value[0] == value[-1] == "'" and value.count("'") == 2:
-                value = value[1:-1]
+                return value[1:-1]
+        elif value.isnumeric():
+            return int(value)
+        elif value.lower() == "true":
+            return True
+        elif value.lower() == "false":
+            return False
 
         return value
