@@ -124,5 +124,5 @@ class PostgresStore(Store):
             return True
         elif value.lower() == "false":
             return False
-        else:
-            return value
+
+        return value
