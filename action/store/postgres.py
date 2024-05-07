@@ -118,5 +118,7 @@ class PostgresStore(Store):
             value = value[0 : -len("::text")]
             if value[0] == value[-1] == "'" and value.count("'") == 2:
                 value = value[1:-1]
+        if value.isnumeric():
+            value = int(value)
 
         return value
