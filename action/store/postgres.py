@@ -120,10 +120,9 @@ class PostgresStore(Store):
                 return value[1:-1]
         elif value.isnumeric():
             return int(value)
-        elif value.lower() in (
-            "true",
-            "false",
-        ):
-            return bool(value)
+        elif value.lower() == "true":
+            return True
+        elif value.lower() == "false":
+            return False
         else:
             return value
