@@ -48,9 +48,9 @@ class ProtoReader:
         ):
             enum_values = {}
             for enum_value in filter(
-                lambda x: isinstance(x, EnumValue), enum_element.elements
+                lambda x: isinstance(x, EnumValue), enum_element.elements  # type: ignore
             ):
                 enum_values[enum_value.name] = enum_value.number
-            enums[enum_element.name] = enum_values
+            enums[enum_element.name] = enum_values  # type: ignore
 
         return enums
