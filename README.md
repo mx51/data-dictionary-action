@@ -44,7 +44,7 @@ jobs:
 
       - uses: mx51/data-dictionary-action@master
         with:
-          store-name: my_store_name
+          store-name: my-store-name
           store-type: postgres
           tool-type: rubenv-sql-migrate
           tool-path: schema
