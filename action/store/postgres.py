@@ -40,7 +40,7 @@ class PostgresStore(Store):
                 c.column_default,
                 c.is_nullable,
                 c.data_type,
-                tc.constraint_type = 'PRIMARY KEY' as is_primary_key
+                bool_or(tc.constraint_type = 'PRIMARY KEY') as is_primary_key
             from information_schema.columns as c
                 join pg_class as pgc
                     on c.table_schema = pgc.relnamespace::regnamespace::text
@@ -59,7 +59,15 @@ class PostgresStore(Store):
                 pgc.relispartition = false
                 and pgc.relkind in ('r', 'v', 'm', 'p')
                 and c.table_schema not in ('information_schema', 'pg_catalog')
-                {exclude_condition};
+                {exclude_condition}
+            group by
+                c.table_schema,
+                c.table_name,
+                c.column_name,
+                c.ordinal_position,
+                c.column_default,
+                c.is_nullable,
+                c.data_type;
             """,
             args,
         )
