@@ -83,7 +83,7 @@ generate () {
                 -e POSTGRES_PASSWORD=${DB_PASSWORD} \
                 -e REQUIRED_ROLES="${REQUIRED_ROLES}" \
                 --name $postgres_container \
-                postgres:14
+                postgres:18
 
             DOCKER_CLEANUP="$postgres_container $DOCKER_CLEANUP"
             ;;
